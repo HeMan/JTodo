@@ -1,7 +1,10 @@
 package se.cygni.jtodo;
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class TodoController {
@@ -15,4 +18,26 @@ public class TodoController {
     List<TodoEntity> getAll() {
         return repo.findAll();
     }
+
+    @PostMapping("/api/todos")
+    TodoEntity add(@RequestBody TodoEntity todo)
+    {
+        return repo.save(todo);
+    }
+
+    @PutMapping("/api/todos/{id}")
+    TodoEntity update(@PathVariable Long id, @RequestBody TodoEntity todoUpdate)
+    {
+        Optional<TodoEntity> u = repo.findById(id);
+        if (u.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "entity not found"
+            );
+        }
+
+        u.get().setTask(todoUpdate.getTask());
+        return repo.save(u.get());
+    }
+
+
 }

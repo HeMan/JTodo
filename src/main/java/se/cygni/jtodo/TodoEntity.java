@@ -6,6 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.Instant;
 
 @Entity
 @Table(name = "todos")
@@ -16,6 +19,11 @@ class TodoEntity {
 
     @Column(nullable = false)
     private String task;
+
+
+    @CreationTimestamp
+    private Instant added;
+
 
     public TodoEntity() {}
 
@@ -38,6 +46,10 @@ class TodoEntity {
 
     public void setTask(String task) {
         this.task = task;
+    }
+
+    public Instant getAdded() {
+        return added;
     }
 
 
