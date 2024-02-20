@@ -1,13 +1,21 @@
 package se.cygni.jtodo;
 
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.Test;
+
+import org.springframework.boot.json.JsonParser;
+import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
+
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import java.util.List;
+import java.util.Map;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +32,7 @@ class JTodoApplicationTests {
 	private Integer port;
 
 	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-			"postgres:15-alpine"
+			"postgres:16-alpine"
 	);
 
 	@BeforeAll
@@ -49,12 +57,57 @@ class JTodoApplicationTests {
 
 	@BeforeEach
 	void setUp() {
-		RestAssured.baseURI = "http://localhost:" + port;
+		RestAssured.baseURI = "http://localhost:" + port + "/api/todos";
 		todoRepository.deleteAll();
 	}
 
 	@Test
-	void shouldGetAllCustomers() {
+	void addTodos() {
+		given()
+				.contentType(ContentType.JSON)
+				.when()
+				.body("{\"task\": \"testtask\"}")
+				.post()
+				.then()
+				.statusCode(200)
+				.body("task", equalTo("testtask"))
+				.body("id", equalTo(1));
+	}
+
+
+
+	@Test
+	void modifyTodo() {
+		RequestSpecification addTodo = RestAssured.given();
+		addTodo.body("{\"task\": \"to be changed\"}");
+		addTodo.contentType(ContentType.JSON);
+		Response addResponse = addTodo.post();
+		JsonParser springParser = JsonParserFactory.getJsonParser();
+		Map<String, Object> json = springParser.parseMap(addResponse.getBody().asString());
+		Integer id = (Integer) json.get("id");
+		given()
+				.contentType(ContentType.JSON)
+				.when()
+				.body("{\"task\": \"Updated task\"}")
+				.put("/" + id)
+				.then()
+				.statusCode(200)
+				.body("task", equalTo("Updated task"));
+	}
+
+	@Test
+	void modifyUnknownTodo(){
+		given()
+				.contentType(ContentType.JSON)
+				.when()
+				.body("{\"task\": \"Updated task\"}")
+				.put("/1231232")
+				.then()
+				.statusCode(404);
+	}
+
+	@Test
+	void shouldGetAllTodos() {
 		List<TodoEntity> customers = List.of(
 				new TodoEntity(null, "Create a todo"),
 				new TodoEntity(null, "Profit")
@@ -64,13 +117,9 @@ class JTodoApplicationTests {
 		given()
 				.contentType(ContentType.JSON)
 				.when()
-				.get("/api/todos")
+				.get()
 				.then()
 				.statusCode(200)
 				.body(".", hasSize(2));
 	}
-}
-
-class CustomerControllerTest {
-
 }
