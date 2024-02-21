@@ -39,4 +39,18 @@ public class TodoController {
         u.get().setTask(todoUpdate.getTask());
         return repo.save(u.get());
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    void delete(@PathVariable Long id)
+    {
+        Optional<TodoEntity> u = repo.findById(id);
+        if (u.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "entity not found"
+            );
+        }
+
+        repo.delete(u.get());
+    }
 }

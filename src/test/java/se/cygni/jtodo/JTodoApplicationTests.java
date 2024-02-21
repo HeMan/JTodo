@@ -107,6 +107,33 @@ class JTodoApplicationTests {
 	}
 
 	@Test
+	void deleteTodo() {
+		RequestSpecification addTodo = RestAssured.given();
+		addTodo.body("{\"task\": \"to be changed\"}");
+		addTodo.contentType(ContentType.JSON);
+		Response addResponse = addTodo.post();
+		JsonParser springParser = JsonParserFactory.getJsonParser();
+		Map<String, Object> json = springParser.parseMap(addResponse.getBody().asString());
+		Integer id = (Integer) json.get("id");
+		given()
+				.contentType(ContentType.JSON)
+				.when()
+				.delete("/" + id)
+				.then()
+				.statusCode(204);
+	}
+
+	@Test
+	void deleteUnknownTodo(){
+		given()
+				.contentType(ContentType.JSON)
+				.when()
+				.delete("/1231232")
+				.then()
+				.statusCode(404);
+	}
+
+	@Test
 	void shouldGetAllTodos() {
 		List<TodoEntity> customers = List.of(
 				new TodoEntity(null, "Create a todo"),
