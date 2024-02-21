@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
+@RequestMapping("/api/todos")
 public class TodoController {
     private final TodoRepository repo;
 
@@ -14,18 +15,18 @@ public class TodoController {
         this.repo = repo;
     }
 
-    @GetMapping("/api/todos")
+    @GetMapping
     List<TodoEntity> getAll() {
         return repo.findAll();
     }
 
-    @PostMapping("/api/todos")
+    @PostMapping
     TodoEntity add(@RequestBody TodoEntity todo)
     {
         return repo.save(todo);
     }
 
-    @PutMapping("/api/todos/{id}")
+    @PutMapping("/{id}")
     TodoEntity update(@PathVariable Long id, @RequestBody TodoEntity todoUpdate)
     {
         Optional<TodoEntity> u = repo.findById(id);
@@ -38,6 +39,4 @@ public class TodoController {
         u.get().setTask(todoUpdate.getTask());
         return repo.save(u.get());
     }
-
-
 }
