@@ -71,7 +71,8 @@ class JTodoApplicationTests {
 				.then()
 				.statusCode(200)
 				.body("task", equalTo("testtask"))
-				.body("id", equalTo(1));
+				.body("id", equalTo(1))
+				.body("done", equalTo(false));
 	}
 
 
@@ -136,8 +137,8 @@ class JTodoApplicationTests {
 	@Test
 	void shouldGetAllTodos() {
 		List<TodoEntity> customers = List.of(
-				new TodoEntity(null, "Create a todo"),
-				new TodoEntity(null, "Profit")
+				new TodoEntity(null, "Create a todo", null, false),
+				new TodoEntity(null, "Profit", null, true)
 		);
 		todoRepository.saveAll(customers);
 

@@ -24,12 +24,22 @@ class TodoEntity {
     @CreationTimestamp
     private Instant added;
 
+    @Column
+    private Instant due;
 
-    public TodoEntity() {}
+    @Column(columnDefinition = "boolean default false")
+    private Boolean done;
 
-    public TodoEntity(Long id, String task) {
+
+    public TodoEntity() {
+        this.done = false;
+    }
+
+    public TodoEntity(Long id, String task, Instant due, Boolean done) {
         this.id = id;
         this.task = task;
+        this.due = due;
+        this.done = done;
     }
 
     public Long getId() {
@@ -50,6 +60,22 @@ class TodoEntity {
 
     public Instant getAdded() {
         return added;
+    }
+
+    public void setDue(Instant due) {
+        this.due = due;
+    }
+
+    public Instant getDue() {
+        return due;
+    }
+
+    public void setDone(Boolean done) {
+        this.done = done;
+    }
+
+    public Boolean getDone() {
+        return done;
     }
 
 
