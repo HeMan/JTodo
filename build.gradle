@@ -1,7 +1,14 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.2'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id 'com.bmuschko.docker-remote-api' version '9.4.0'
 }
 
 group = 'se.cygni'
@@ -14,6 +21,8 @@ java {
 repositories {
 	mavenCentral()
 }
+
+apply plugin: 'com.bmuschko.docker-remote-api'
 
 ext {
 	set('testcontainers.version', "1.19.3")
@@ -36,4 +45,50 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+
+docker {
+	url = 'unix:///var/run/docker.sock'
+	registryCredentials {
+		url = 'https://ghcr.io'
+		if (project.hasProperty('dockerRegistryUser') and project.hasProperty('dockerRegistryPwd')) {
+			username = project.property('dockerRegistryUser')
+			password = project.property('dockerRegistryPwd')
+		}
+	}
+}
+
+tasks.register('buildImage', DockerBuildImage) {
+	dependsOn build
+	group = "Docker"
+	inputDir = file(".")
+	images = ["ghcr.io/heman/jtodo:${version}"]
+}
+
+tasks.register('pushImage', DockerPushImage) {
+	group = "Docker"
+	dependsOn buildImage
+	images = ['ghcr.io/heman/jtodo']
+}
+
+
+tasks.register('createContainer', DockerCreateContainer) {
+	group = "Docker"
+	dependsOn pushImage
+	targetImageId buildImage.getImageId()
+	containerName = "JTodo"
+	hostConfig.portBindings = ['8080:8080']
+	hostConfig.autoRemove = true
+}
+
+tasks.register('startContainer', DockerStartContainer) {
+	group = "Docker"
+	dependsOn createContainer
+	targetContainerId "JTodo"
+}
+
+tasks.register('stopContainer', DockerStopContainer) {
+	group = "Docker"
+	targetContainerId "JTodo"
 }
