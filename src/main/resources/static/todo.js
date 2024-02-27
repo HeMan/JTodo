@@ -26,12 +26,12 @@ async function clicked(e) {
     })
     const todo = await response.json()
     console.log(todo)
-    getTodos()
+    await getTodos()
     task.value = ""
 }
 
 async function loaded() {
-    getTodos()
+    await getTodos()
     let taskForm = document.getElementById("taskForm")
     console.log(taskForm)
     taskForm.addEventListener("submit", clicked)
