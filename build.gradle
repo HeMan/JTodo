@@ -53,8 +53,8 @@ docker {
 	registryCredentials {
 		url = 'https://ghcr.io'
 		if (project.hasProperty('dockerRegistryUser') and project.hasProperty('dockerRegistryPwd')) {
-			username = project.property('dockerRegistryUser')
-			password = project.property('dockerRegistryPwd')
+			username = project.property('dockerRegistryUser') as String
+			password = project.property('dockerRegistryPwd') as String
 		}
 	}
 }
@@ -63,7 +63,7 @@ tasks.register('buildImage', DockerBuildImage) {
 	dependsOn build
 	group = "Docker"
 	inputDir = file(".")
-	images = ["ghcr.io/heman/jtodo:${version}"]
+	images = ["ghcr.io/heman/jtodo:${version}" as String]
 }
 
 tasks.register('pushImage', DockerPushImage) {

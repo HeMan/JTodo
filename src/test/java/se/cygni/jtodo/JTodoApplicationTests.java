@@ -31,7 +31,7 @@ class JTodoApplicationTests {
 	@LocalServerPort
 	private Integer port;
 
-	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+	final static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
 			"postgres:16-alpine"
 	);
 
@@ -66,11 +66,11 @@ class JTodoApplicationTests {
 		given()
 				.contentType(ContentType.JSON)
 				.when()
-				.body("{\"task\": \"testtask\"}")
+				.body("{\"task\": \"test task\"}")
 				.post()
 				.then()
 				.statusCode(200)
-				.body("task", equalTo("testtask"))
+				.body("task", equalTo("test task"))
 				.body("id", equalTo(1))
 				.body("done", equalTo(false));
 	}

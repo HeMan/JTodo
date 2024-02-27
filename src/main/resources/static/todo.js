@@ -1,7 +1,7 @@
 async function getTodos() {
     const response = await fetch("api/todos")
     const todos = await response.json()
-    document.getElementById("todolist").innerHTML = []
+    document.getElementById("todolist").innerHTML = ""
     todos.forEach((todo) => {
             let newA = document.createElement("a")
             newA.classList.add("list-group-item")
