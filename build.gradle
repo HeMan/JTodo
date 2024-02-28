@@ -71,12 +71,14 @@ docker {
 tasks.register('buildImage', DockerBuildImage) {
 	dependsOn build
 	group = "Docker"
+	description = "Build docker image"
 	inputDir = file(".")
 	images = ["ghcr.io/heman/jtodo:${version}" as String]
 }
 
 tasks.register('pushImage', DockerPushImage) {
 	group = "Docker"
+	description = "Push docker image to registry"
 	dependsOn buildImage
 	images = ['ghcr.io/heman/jtodo']
 }
@@ -84,7 +86,8 @@ tasks.register('pushImage', DockerPushImage) {
 
 tasks.register('createContainer', DockerCreateContainer) {
 	group = "Docker"
-	dependsOn pushImage
+	description = "Create docker image"
+	// dependsOn pushImage
 	targetImageId buildImage.getImageId()
 	containerName = "JTodo"
 	hostConfig.portBindings = ['8080:8080']
@@ -93,11 +96,13 @@ tasks.register('createContainer', DockerCreateContainer) {
 
 tasks.register('startContainer', DockerStartContainer) {
 	group = "Docker"
+	description = "Starts docker container"
 	dependsOn createContainer
 	targetContainerId "JTodo"
 }
 
 tasks.register('stopContainer', DockerStopContainer) {
+	description = "Stops running container"
 	group = "Docker"
 	targetContainerId "JTodo"
 }
