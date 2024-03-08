@@ -50,10 +50,6 @@ class TodoEntity {
         return task;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setTask(String task) {
         this.task = task;
     }
