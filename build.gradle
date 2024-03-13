@@ -32,7 +32,7 @@ repositories {
 apply plugin: 'com.bmuschko.docker-remote-api'
 
 ext {
-	set('testcontainers.version', "1.19.3")
+	set('testcontainers.version', "1.19.7")
 }
 
 dependencies {
