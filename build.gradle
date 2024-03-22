@@ -6,7 +6,7 @@ import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
 
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.2.3'
+	id 'org.springframework.boot' version '3.2.4'
 	id 'io.spring.dependency-management' version '1.1.4'
 	id 'org.springdoc.openapi-gradle-plugin' version '1.8.0'
 	id 'com.bmuschko.docker-remote-api' version '9.4.0'
@@ -61,7 +61,7 @@ docker {
 	url = 'unix:///var/run/docker.sock'
 	registryCredentials {
 		url = 'https://ghcr.io'
-		if (project.hasProperty('dockerRegistryUser') and project.hasProperty('dockerRegistryPwd')) {
+		if (project.hasProperty('dockerRegistryUser') && project.hasProperty('dockerRegistryPwd')) {
 			username = project.property('dockerRegistryUser') as String
 			password = project.property('dockerRegistryPwd') as String
 		}
