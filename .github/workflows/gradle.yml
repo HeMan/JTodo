@@ -58,11 +58,11 @@ jobs:
         run: ./gradlew build
 
       # https://github.com/marketplace/actions/push-to-ghcr
-      - name: Build and publish a Docker image for ${{ github.repository }}
-        uses: macbre/push-to-ghcr@master
+      - name: Build and push
+        uses: docker/build-push-action@v6
         with:
-          image_name: ${{ github.repository }}  # it will be lowercased internally
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          push: true
+          tags: latest
 
   dependency-submission:
 
