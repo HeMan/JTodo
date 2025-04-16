@@ -2,7 +2,7 @@ version: '2'
 
 services:
   app:
-    image: 'ghcr.io/heman/jtodo:0.0.1-SNAPSHOT'
+    image: 'ghcr.io/heman/jtodo:latest'
     ports:
       - "8080:8080"
     build:
