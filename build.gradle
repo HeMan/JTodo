@@ -47,7 +47,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.testcontainers:postgresql'
 	testImplementation 'io.rest-assured:rest-assured'
-	testImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.12.2'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 }
