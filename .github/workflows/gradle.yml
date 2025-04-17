@@ -50,6 +50,8 @@ jobs:
   docker_publish:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
 
     steps:
       - uses: actions/checkout@v4
@@ -60,8 +62,8 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-
-      # Removed redundant Gradle build step
+        with:
+          gradle-version: 8.13
 
       # https://github.com/marketplace/actions/push-to-ghcr
       - name: Extract git metadata
