@@ -38,7 +38,14 @@ jobs:
       run: ./gradlew build
 
     - name: Run tests
-      run: ./gradlew clean && ./gradlew test
+      run: ./gradlew test
+
+    - name: Upload Test Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-report
+        path: build/test-results/test
 
   docker_publish:
     needs: build
@@ -54,15 +61,26 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build with Gradle Wrapper
-        run: ./gradlew build
+      # Removed redundant Gradle build step
 
       # https://github.com/marketplace/actions/push-to-ghcr
+      - name: Extract git metadata
+        id: gitmeta
+        run: |
+          repo_lower=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          echo "repo_lower=$repo_lower" >> $GITHUB_OUTPUT
+          echo "sha_short=$(git rev-parse --short HEAD | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+          tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '')
+          echo "tag=$(echo $tag | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: latest
+          tags: |
+            ghcr.io/${{ steps.gitmeta.outputs.repo_lower }}:latest
+            ghcr.io/${{ steps.gitmeta.outputs.repo_lower }}:${{ steps.gitmeta.outputs.sha_short }}
+            ${{ steps.gitmeta.outputs.tag != '' && format('ghcr.io/{0}:{1}', steps.gitmeta.outputs.repo_lower, steps.gitmeta.outputs.tag) }}
 
   dependency-submission:
 
