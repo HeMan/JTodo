@@ -6,7 +6,7 @@ import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
 
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.4'
+	id 'org.springframework.boot' version '3.5.7'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'org.springdoc.openapi-gradle-plugin' version '1.9.0'
 	id 'com.bmuschko.docker-remote-api' version '9.4.0'
