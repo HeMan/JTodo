@@ -7,7 +7,7 @@ COPY . .
 RUN gradle clean build --no-daemon -x test
 
 # --- Runtime stage ---
-FROM openjdk:27-ea-slim
+FROM openjdk:25-ea-slim
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar /app/JTodo.jar
 ENTRYPOINT ["java"]
