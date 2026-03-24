@@ -4,10 +4,7 @@
 	"name": "Java & PostgreSQL",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
-	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-	"features": {
-		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
-	}
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {}
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
