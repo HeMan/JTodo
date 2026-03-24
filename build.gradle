@@ -6,7 +6,7 @@ import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
 
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '4.0.0'
+	id 'org.springframework.boot' version '4.0.4'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'org.springdoc.openapi-gradle-plugin' version '1.9.0'
 	id 'com.bmuschko.docker-remote-api' version '9.4.0'
@@ -16,7 +16,7 @@ group = 'se.cygni'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '21'
+	sourceCompatibility = '27'
 }
 
 openApi {
@@ -41,7 +41,7 @@ dependencies {
 	runtimeOnly 'com.h2database:h2:2.4.240'
 	runtimeOnly 'org.postgresql:postgresql:42.7.8'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.testcontainers:postgresql:1.21.3'
+	testImplementation "org.testcontainers:testcontainers-postgresql:2.0.4"
 	testImplementation 'io.rest-assured:rest-assured:5.5.2'
 	testImplementation 'org.junit.jupiter:junit-jupiter:6.0.3'
 }

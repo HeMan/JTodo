@@ -32,7 +32,7 @@ class JTodoApplicationTests {
 	private Integer port;
 
 	final static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-			"postgres:16-alpine"
+			"postgres:18-alpine"
 	);
 
 	@BeforeAll
