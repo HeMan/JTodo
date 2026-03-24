@@ -63,8 +63,6 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
-        with:
-          gradle-version: 8.13
 
       # https://github.com/marketplace/actions/push-to-ghcr
       - name: Extract git metadata
