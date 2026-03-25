@@ -1,22 +1,14 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
-
 name: Java CI with Gradle
 
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: [ "**" ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -28,27 +20,14 @@ jobs:
       with:
         java-version: '25'
         distribution: 'temurin'
-
-    # Configure Gradle for optimal use in GiHub Actions, including caching of downloaded dependencies.
-    # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v6
-
-    - name: Build with Gradle Wrapper
-      run: ./gradlew build
-
     - name: Run tests
       run: ./gradlew test
 
-    - name: Upload Test Report
-      if: always()
-      uses: actions/upload-artifact@v7
-      with:
-        name: test-report
-        path: build/test-results/test
-
-  docker_publish:
-    needs: build
+  build-and-publish:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -63,14 +42,20 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
-
-      # https://github.com/marketplace/actions/push-to-ghcr
+      - name: Build with Gradle Wrapper
+        run: ./gradlew build -x test
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-report
+          path: build/test-results/test
       - name: Extract git metadata
         id: gitmeta
         run: |
           repo_lower=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
           echo "repo_lower=$repo_lower" >> $GITHUB_OUTPUT
-          echo "sha_short=$(git rev-parse --short HEAD | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT      
+          echo "sha_short=$(git rev-parse --short HEAD | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v4
         with:
