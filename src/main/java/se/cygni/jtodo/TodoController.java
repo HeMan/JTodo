@@ -1,7 +1,6 @@
 package se.cygni.jtodo;
 
 import java.util.List;
-import java.util.Optional;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,31 +30,30 @@ public class TodoController {
 
     @PostMapping
     @Operation(summary = "Add new todo", description = "Add a new todo to the database", responses = @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TodoEntity.class))))
-    TodoEntity add(@RequestBody TodoEntity todo) {
+    TodoEntity add(@RequestBody CreateTodoRequest request) {
+        var todo = new TodoEntity();
+        todo.setTask(request.task());
+        if (request.done() != null) {
+            todo.setDone(request.done());
+        }
         return repo.save(todo);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update todo", description = "Update todo. Could be any of the properties of the todo.", responses = {@ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TodoEntity.class))), @ApiResponse(responseCode = "404", description = "Not found")})
-    TodoEntity update(@PathVariable("id") @Parameter(description = "id of todo") Long id, @RequestBody TodoEntity todoUpdate) {
-        Optional<TodoEntity> u = repo.findById(id);
-        if (u.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found");
-        }
-
-        u.get().setTask(todoUpdate.getTask());
-        return repo.save(u.get());
+    TodoEntity update(@PathVariable @Parameter(description = "id of todo") Long id, @RequestBody UpdateTodoRequest request) {
+        var todo = repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found"));
+        todo.setTask(request.task());
+        return repo.save(todo);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete todo", responses = {@ApiResponse(responseCode = "204", description = "The todo was deleted successfully"), @ApiResponse(responseCode = "404", description = "Not found")})
-    void delete(@PathVariable("id") Long id) {
-        Optional<TodoEntity> u = repo.findById(id);
-        if (u.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found");
-        }
-
-        repo.delete(u.get());
+    void delete(@PathVariable Long id) {
+        var todo = repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found"));
+        repo.delete(todo);
     }
 }

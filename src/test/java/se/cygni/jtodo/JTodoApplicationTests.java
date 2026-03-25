@@ -92,7 +92,8 @@ class JTodoApplicationTests {
 
 	@Test
 	void addTodos() throws Exception {
-		var response = post("", "{\"task\": \"test task\", \"done\": false}");
+		var response = post("", """
+				{"task": "test task", "done": false}""");
 		assertThat(response.statusCode()).isEqualTo(200);
 		JsonParser parser = JsonParserFactory.getJsonParser();
 		Map<String, Object> body = parser.parseMap(response.body());
@@ -102,24 +103,28 @@ class JTodoApplicationTests {
 
 	@Test
 	void modifyTodo() throws Exception {
-		var addResponse = post("", "{\"task\": \"to be changed\"}");
+		var addResponse = post("", """
+				{"task": "to be changed"}""");
 		JsonParser parser = JsonParserFactory.getJsonParser();
 		Integer id = (Integer) parser.parseMap(addResponse.body()).get("id");
 
-		var response = put("/" + id, "{\"task\": \"Updated task\"}");
+		var response = put("/" + id, """
+				{"task": "Updated task"}""");
 		assertThat(response.statusCode()).isEqualTo(200);
 		assertThat(parser.parseMap(response.body()).get("task")).isEqualTo("Updated task");
 	}
 
 	@Test
 	void modifyUnknownTodo() throws Exception {
-		var response = put("/1231232", "{\"task\": \"Updated task\"}");
+		var response = put("/1231232", """
+				{"task": "Updated task"}""");
 		assertThat(response.statusCode()).isEqualTo(404);
 	}
 
 	@Test
 	void deleteTodo() throws Exception {
-		var addResponse = post("", "{\"task\": \"to be changed\"}");
+		var addResponse = post("", """
+				{"task": "to be changed"}""");
 		JsonParser parser = JsonParserFactory.getJsonParser();
 		Integer id = (Integer) parser.parseMap(addResponse.body()).get("id");
 

@@ -14,14 +14,15 @@ public class OpenAPIConfiguration {
     @Bean
     public OpenAPI defineOpenApi() {
 
-        Server server = new Server();
+        var server = new Server();
         server.setUrl("http://localhost:8080");
         server.setDescription("Development");
 
-        Info information = new Info()
+        var information = new Info()
                 .title("Todo Management System API")
                 .version("1.0")
                 .description("This API exposes endpoints to manage todos.");
+
         return new OpenAPI().info(information).servers(List.of(server));
     }
 }
