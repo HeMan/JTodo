@@ -10,6 +10,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'org.springdoc.openapi-gradle-plugin' version '1.9.0'
 	id 'com.bmuschko.docker-remote-api' version '9.4.0'
+	id 'info.solidsoft.pitest' version '1.19.0-rc.3'
 }
 
 group = 'se.cygni'
@@ -50,6 +51,14 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+pitest {
+	junit5PluginVersion = '1.2.1'
+	targetClasses = ['se.cygni.jtodo.*']
+	outputFormats = ['XML', 'HTML']
+	timestampedReports = false
+	threads = 4
+	mutators = ['STRONGER']
+}
 
 docker {
 	url = 'unix:///var/run/docker.sock'
