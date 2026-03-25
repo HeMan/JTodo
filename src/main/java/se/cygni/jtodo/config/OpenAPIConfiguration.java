@@ -1,4 +1,4 @@
-package se.cygni.jtodo;
+package se.cygni.jtodo.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -13,7 +13,6 @@ public class OpenAPIConfiguration {
 
     @Bean
     public OpenAPI defineOpenApi() {
-
         var server = new Server();
         server.setUrl("http://localhost:8080");
         server.setDescription("Development");

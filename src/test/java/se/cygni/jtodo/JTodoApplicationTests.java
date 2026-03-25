@@ -10,13 +10,14 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
+import se.cygni.jtodo.domain.TodoEntity;
+import se.cygni.jtodo.domain.TodoRepository;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,6 +29,7 @@ class JTodoApplicationTests {
 
 	private HttpClient http;
 	private String baseUrl;
+	private final JsonParser parser = JsonParserFactory.getJsonParser();
 
 	static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:18-alpine");
 
@@ -95,8 +97,7 @@ class JTodoApplicationTests {
 		var response = post("", """
 				{"task": "test task", "done": false}""");
 		assertThat(response.statusCode()).isEqualTo(200);
-		JsonParser parser = JsonParserFactory.getJsonParser();
-		Map<String, Object> body = parser.parseMap(response.body());
+		var body = parser.parseMap(response.body());
 		assertThat(body.get("task")).isEqualTo("test task");
 		assertThat(body.get("done")).isEqualTo(false);
 	}
@@ -105,7 +106,6 @@ class JTodoApplicationTests {
 	void modifyTodo() throws Exception {
 		var addResponse = post("", """
 				{"task": "to be changed"}""");
-		JsonParser parser = JsonParserFactory.getJsonParser();
 		Integer id = (Integer) parser.parseMap(addResponse.body()).get("id");
 
 		var response = put("/" + id, """
@@ -125,7 +125,6 @@ class JTodoApplicationTests {
 	void deleteTodo() throws Exception {
 		var addResponse = post("", """
 				{"task": "to be changed"}""");
-		JsonParser parser = JsonParserFactory.getJsonParser();
 		Integer id = (Integer) parser.parseMap(addResponse.body()).get("id");
 
 		var response = delete("/" + id);
@@ -140,15 +139,13 @@ class JTodoApplicationTests {
 
 	@Test
 	void shouldGetAllTodos() throws Exception {
-		List<TodoEntity> customers = List.of(
+		todoRepository.saveAll(List.of(
 				new TodoEntity(null, "Create a todo", null, false),
 				new TodoEntity(null, "Profit", null, true)
-		);
-		todoRepository.saveAll(customers);
+		));
 
 		var response = get();
 		assertThat(response.statusCode()).isEqualTo(200);
-		List<?> body = JsonParserFactory.getJsonParser().parseList(response.body());
-		assertThat(body).hasSize(2);
+		assertThat(parser.parseList(response.body())).hasSize(2);
 	}
 }

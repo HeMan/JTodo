@@ -1,4 +1,7 @@
-package se.cygni.jtodo;
+package se.cygni.jtodo.api;
+
+import se.cygni.jtodo.domain.TodoEntity;
+import se.cygni.jtodo.domain.TodoRepository;
 
 import java.util.List;
 
@@ -24,28 +27,28 @@ public class TodoController {
 
     @GetMapping
     @Operation(summary = "All todos", description = "List all todos")
-    List<TodoEntity> getAll() {
-        return repo.findAll();
+    List<TodoResponse> getAll() {
+        return repo.findAll().stream().map(TodoResponse::from).toList();
     }
 
     @PostMapping
-    @Operation(summary = "Add new todo", description = "Add a new todo to the database", responses = @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TodoEntity.class))))
-    TodoEntity add(@RequestBody CreateTodoRequest request) {
+    @Operation(summary = "Add new todo", description = "Add a new todo to the database", responses = @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TodoResponse.class))))
+    TodoResponse add(@RequestBody CreateTodoRequest request) {
         var todo = new TodoEntity();
         todo.setTask(request.task());
         if (request.done() != null) {
             todo.setDone(request.done());
         }
-        return repo.save(todo);
+        return TodoResponse.from(repo.save(todo));
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update todo", description = "Update todo. Could be any of the properties of the todo.", responses = {@ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TodoEntity.class))), @ApiResponse(responseCode = "404", description = "Not found")})
-    TodoEntity update(@PathVariable @Parameter(description = "id of todo") Long id, @RequestBody UpdateTodoRequest request) {
+    @Operation(summary = "Update todo", description = "Update todo. Could be any of the properties of the todo.", responses = {@ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TodoResponse.class))), @ApiResponse(responseCode = "404", description = "Not found")})
+    TodoResponse update(@PathVariable @Parameter(description = "id of todo") Long id, @RequestBody UpdateTodoRequest request) {
         var todo = repo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found"));
         todo.setTask(request.task());
-        return repo.save(todo);
+        return TodoResponse.from(repo.save(todo));
     }
 
     @DeleteMapping("/{id}")
