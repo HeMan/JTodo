@@ -22,7 +22,7 @@ jobs:
       contents: read
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Set up JDK 25
       uses: actions/setup-java@v5
       with:
@@ -55,7 +55,7 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
@@ -92,7 +92,7 @@ jobs:
       contents: write
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Set up JDK 21
       uses: actions/setup-java@v5
       with:
